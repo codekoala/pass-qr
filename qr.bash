@@ -25,10 +25,12 @@ PASS_QR_FZF=${PASS_QR_FZF:-0}
 cmd_qr_usage() {
     cat <<-_EOF
 Usage:
-    $PROGRAM qr [options]
+    $PROGRAM qr [options] [output]
         Provide an interactive solution to generate QR codes for existing
         passwords. It will show all pass-names in either fzf or rofi, waits for
-        the user to select one, then displays a QR code for the password.
+        the user to select one, then displays a QR code for the password. If an
+        output path is specified, the QR code will be saved as a PNG to the
+        specified location.
 
         The user can select fzf or rofi by giving either --fzf or --rofi.
         By default, rofi will be selected and pass-qr will fallback to
@@ -51,7 +53,7 @@ command_exists() {
 
 cmd_qr() {
     # Parse arguments
-    local opts fzf=${PASS_QR_FZF} rofi=${PASS_QR_ROFI}
+    local opts fzf=${PASS_QR_FZF} rofi=${PASS_QR_ROFI} output=""
     opts="$($GETOPT -o fr: -l fzf,rofi: -n "$PROGRAM $COMMAND" -- "$@")"
     local err=$?
     eval set -- "$opts"
@@ -61,6 +63,10 @@ cmd_qr() {
             -r|--rofi) rofi=1; shift ;;
             --) shift; break ;;
     esac done
+
+    if [ ! -z "${@}" ]; then
+        output=$(realpath "${@}")
+    fi
 
     [[ $err -ne 0 ]] && die "$(cmd_qr_short_usage)"
 
@@ -102,7 +108,12 @@ cmd_qr() {
     fi
 
     if ls "$PASSWORD_STORE_DIR/$passfile.gpg" >/dev/null 2>&1; then
-        cmd_show "$passfile" --qrcode || exit 1
+        if [ ! -z "${output}" ]; then
+            echo -n $(cmd_show "$passfile" | head -1) | qrencode --size 10 --output "${output}" || exit 1
+            echo "QR code written to ${output}"
+        else
+            cmd_show "$passfile" --qrcode || exit 1
+        fi
     fi
 }
 

@@ -13,10 +13,12 @@ have your password store on your cell phone but want to quickly use a password.
 
 ```
 Usage:
-    pass qr [options]
+    pass qr [options] [output]
         Provide an interactive solution to generate QR codes for existing
         passwords. It will show all pass-names in either fzf or rofi, waits for
-        the user to select one, then displays a QR code for the password.
+        the user to select one, then displays a QR code for the password. If an
+        output path is specified, the QR code will be saved as a PNG to the
+        specified location.
 
         The user can select fzf or rofi by giving either --fzf or --rofi.
         By default, rofi will be selected and pass-qr will fallback to
@@ -48,7 +50,7 @@ sudo make install  # For OSX: make install PREFIX=/usr/local
 
 `pass-qr` is available in the [Arch User Repository][aur].
 ```sh
-pacaur -S pass-qr  # or your preferred AUR install method
+paru -S pass-qr  # or your preferred AUR install method
 ```
 
 ## Contribution

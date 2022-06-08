@@ -18,6 +18,8 @@
 
 
 PASSWORD_STORE_DIR="${PASSWORD_STORE_DIR:-$HOME/.password-store}"
+PASS_QR_ROFI=${PASS_QR_ROFI:-0}
+PASS_QR_FZF=${PASS_QR_FZF:-0}
 
 
 cmd_qr_usage() {
@@ -49,7 +51,7 @@ command_exists() {
 
 cmd_qr() {
     # Parse arguments
-    local opts fzf=0 rofi=0
+    local opts fzf=${PASS_QR_FZF} rofi=${PASS_QR_ROFI}
     opts="$($GETOPT -o fr: -l fzf,rofi: -n "$PROGRAM $COMMAND" -- "$@")"
     local err=$?
     eval set -- "$opts"
